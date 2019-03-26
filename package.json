@@ -1,0 +1,19 @@
+{
+  "name": "stateful-gameloop",
+  "version": "0.0.1",
+  "description": "A gameloop that helps you handle state as well",
+  "main": "dist/index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gameloop",
+    "state",
+    "typescript"
+  ],
+  "author": "Manuel J. Thomsen",
+  "license": "MIT"
+}
