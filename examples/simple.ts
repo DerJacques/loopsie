@@ -6,7 +6,10 @@ const initialState = {
   fuel: 100
 };
 
-const screen = blessed.screen();
+const screen = blessed.screen({
+  debug: true
+});
+
 const grid = new contrib.grid({ rows: 4, cols: 2, screen: screen });
 
 const fuelIndicator = grid.set(0, 0, 1, 1, contrib.gauge, {
