@@ -1,5 +1,6 @@
 interface GameLoopConfig {
   msPerUpdate: number;
+  maxFPS: number;
 }
 
 type State<T = unknown> = T;
@@ -8,7 +9,8 @@ type TickCallback<T> = (delta: number, state: State<T>) => State<T> | void;
 type Subscription<T> = (state: State<T>) => void;
 
 const defaultConfig: GameLoopConfig = {
-  msPerUpdate: (1 / 60) * 1000
+  msPerUpdate: (1 / 60) * 1000,
+  maxFPS: 30
 };
 
 export class GameLoop<T> {
@@ -19,6 +21,8 @@ export class GameLoop<T> {
   private subscriptions: Array<Subscription<T>> = [];
 
   private lastTick: number | undefined;
+  private lastRender: number | undefined;
+
   private lag = 0;
 
   constructor(
@@ -49,7 +53,17 @@ export class GameLoop<T> {
   }
 
   private render(state: State<T>) {
-    this.subscriptions.forEach(subscription => subscription(state));
+    const now = Date.now();
+
+    if (!this.lastRender) {
+      this.lastRender = now;
+    }
+
+    const timeSinceLastRender = now - this.lastRender;
+    if (timeSinceLastRender >= (1 / this.config.maxFPS) * 1000) {
+      this.subscriptions.forEach(subscription => subscription(state));
+      this.lastRender = now;
+    }
   }
 
   private runLoop() {
@@ -58,19 +72,19 @@ export class GameLoop<T> {
     }
 
     const now = Date.now();
-    const elapsed = this.lastTick ? now - this.lastTick : 0;
+    const delta = this.lastTick ? now - this.lastTick : 0;
 
     this.lastTick = now;
-    this.lag = this.lag + elapsed;
+    this.lag = this.lag + delta;
 
     while (this.lag >= this.config.msPerUpdate && this.running) {
       this.state = this.callbacks.reduce<State<T>>(
-        (state, callback) => callback(elapsed, state) || state,
+        (state, callback) => callback(this.lag, state) || state,
         this.state
       );
 
       this.state = this.runOnce.reduce<State<T>>(
-        (state, callback) => callback(elapsed, state) || state,
+        (state, callback) => callback(this.lag, state) || state,
         this.state
       );
 
@@ -83,7 +97,7 @@ export class GameLoop<T> {
     if (typeof window !== "undefined" && window.requestAnimationFrame) {
       window.requestAnimationFrame(() => this.runLoop);
     } else {
-      this.runLoop();
+      setTimeout(() => this.runLoop(), 0);
     }
   }
 }

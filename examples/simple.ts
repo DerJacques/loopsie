@@ -1,34 +1,49 @@
 import { GameLoop } from "../main";
+import blessed from "blessed";
+import contrib from "blessed-contrib";
 
 const initialState = {
-  loops: 0
+  fuel: 100
 };
 
-const gameLoop = new GameLoop(initialState);
+const screen = blessed.screen();
+const grid = new contrib.grid({ rows: 4, cols: 2, screen: screen });
 
-let renders = 0;
+const fuelIndicator = grid.set(0, 0, 1, 1, contrib.gauge, {
+  label: "Fuel",
+  stroke: "green",
+  fill: "white"
+});
 
-gameLoop.subscribe(state => {
-  renders += 1;
-  console.log("SEND VIA WEBSOCKET", state.loops, renders);
+const map: any = grid.set(0, 1, 4, 1, contrib.map, { label: "World Map" });
+map.addMarker({ lon: "-79.0000", lat: "37.5000", color: "red", char: "X" });
+
+const log = grid.set(1, 0, 3, 1, contrib.log, {
+  fg: "green",
+  selectedFg: "green",
+  label: "Ship Log"
+});
+
+screen.key(["escape", "q", "C-c"], function(_ch, _key) {
+  return process.exit(0);
+});
+
+const gameLoop = new GameLoop(initialState, {
+  msPerUpdate: 1000,
+  maxFPS: 1
 });
 
 gameLoop.subscribe(state => {
-  console.log("RENDER TO SCREEN", state.loops);
+  fuelIndicator.setPercent(state.fuel);
+  screen.render();
+  log.log("Rendering");
 });
 
 gameLoop.addCallback((delta, state) => {
-  console.log("CALLBACK", delta);
-  if (state.loops === 12) {
-    gameLoop.stop();
-  }
   return {
-    loops: state.loops + 1
+    ...state,
+    fuel: Math.round(state.fuel - delta / 1000)
   };
 });
-
-gameLoop.addRunOnce(() => ({
-  loops: 10
-}));
 
 gameLoop.start();

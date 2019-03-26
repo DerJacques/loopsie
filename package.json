@@ -15,5 +15,12 @@
     "typescript"
   ],
   "author": "Manuel J. Thomsen",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.8.12"
+  },
+  "devDependencies": {
+    "@types/blessed": "^0.1.11"
+  }
 }
