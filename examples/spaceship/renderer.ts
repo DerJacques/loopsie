@@ -1,6 +1,7 @@
 import blessed from "blessed";
 import contrib from "blessed-contrib";
 import { gameLoop } from "./logic";
+import { setSpeed } from "./models/ship";
 
 const screen = blessed.screen({
   debug: true
@@ -16,7 +17,8 @@ const fuelIndicator = grid.set(0, 0, 1, 3, contrib.gauge, {
 
 const controls: any = grid.set(0, 3, 4, 3, contrib.tree, {
   label: "Commands",
-  focusable: true
+  focusable: true,
+  vi: true
 });
 controls.focus();
 controls.setData({
@@ -42,7 +44,7 @@ controls.on("select", function(node: any) {
     case "Full Speed":
       gameLoop.addRunOnce((_delta, state) => ({
         ...state,
-        speed: 100
+        player: setSpeed(state.player, 100)
       }));
       break;
   }
@@ -67,12 +69,12 @@ screen.key(["escape", "q", "C-c"], function(_ch, _key) {
 });
 
 gameLoop.subscribe(state => {
-  fuelIndicator.setPercent(state.fuel);
+  fuelIndicator.setPercent(state.player.fuel);
   speedIndicator.setData([
-    { percent: state.speed.toString(), label: "web1", color: "green" }
+    { percent: state.player.speed.toString(), label: "web1", color: "green" }
   ]);
   screen.render();
-  log.log("Rendering");
+  log.log(`Position: (${state.player.position.x}, ${state.player.position.y})`);
 });
 
 gameLoop.start();

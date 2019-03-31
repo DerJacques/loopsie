@@ -1,13 +1,8 @@
 import { GameLoop } from "../../main";
+import { getInitialState, move } from "./models/ship";
 
 const initialState = {
-  fuel: 100,
-  speed: 5,
-  direction: 30, // Degrees
-  position: {
-    x: 0,
-    y: 0
-  }
+  player: getInitialState()
 };
 
 export const gameLoop = new GameLoop(initialState, {
@@ -15,25 +10,7 @@ export const gameLoop = new GameLoop(initialState, {
   maxFPS: 1
 });
 
-function perSecond(x: number, delta: number) {
-  return (x * delta) / 1000;
-}
-
-// Reduce fuel
+// Move player
 gameLoop.addCallback((delta, state) => {
-  return {
-    ...state,
-    fuel: state.fuel - perSecond(0.3, delta)
-  };
-});
-
-// Set positionn
-gameLoop.addCallback((delta, state) => {
-  return {
-    ...state,
-    position: {
-      x: state.position.x + perSecond(state.speed, delta),
-      y: state.position.y + perSecond(state.speed, delta)
-    }
-  };
+  return { ...state, player: move(state.player, delta) };
 });
