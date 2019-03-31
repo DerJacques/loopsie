@@ -4,7 +4,8 @@ import { gameLoop } from "./logic";
 import { setSpeed } from "./models/ship";
 
 const screen = blessed.screen({
-  debug: true
+  debug: true,
+  smartCSR: true
 });
 
 const grid = new contrib.grid({ rows: 4, cols: 6, screen: screen });
@@ -14,6 +15,10 @@ const fuelIndicator = grid.set(0, 0, 1, 3, contrib.gauge, {
   stroke: "green",
   fill: "white"
 });
+
+enum ControlType {
+  Speed
+}
 
 const controls: any = grid.set(0, 3, 4, 3, contrib.tree, {
   label: "Commands",
@@ -28,10 +33,22 @@ controls.setData({
       children: {
         Speed: {
           children: {
-            "Full Speed": {},
-            "Medium Speed": {},
-            "Low Speed": {},
-            Reverse: {}
+            "Full Speed": {
+              type: ControlType.Speed,
+              speed: 100
+            },
+            "Medium Speed": {
+              type: ControlType.Speed,
+              speed: 50
+            },
+            "Low Speed": {
+              type: ControlType.Speed,
+              speed: 10
+            },
+            Reverse: {
+              type: ControlType.Speed,
+              speed: -10
+            }
           }
         }
       }
@@ -40,11 +57,11 @@ controls.setData({
 });
 
 controls.on("select", function(node: any) {
-  switch (node.name) {
-    case "Full Speed":
+  switch (node.type) {
+    case ControlType.Speed:
       gameLoop.addRunOnce((_delta, state) => ({
         ...state,
-        player: setSpeed(state.player, 100)
+        player: setSpeed(state.player, node.speed)
       }));
       break;
   }
@@ -71,7 +88,11 @@ screen.key(["escape", "q", "C-c"], function(_ch, _key) {
 gameLoop.subscribe(state => {
   fuelIndicator.setPercent(state.player.fuel);
   speedIndicator.setData([
-    { percent: state.player.speed.toString(), label: "web1", color: "green" }
+    {
+      percent: Math.abs(state.player.speed).toString(),
+      label: "Speed",
+      color: state.player.speed >= 0 ? "green" : "red"
+    }
   ]);
   screen.render();
   log.log(`Position: (${state.player.position.x}, ${state.player.position.y})`);
