@@ -3,12 +3,14 @@
   "version": "0.0.1",
   "description": "A gameloop that helps you handle state as well",
   "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "directories": {
     "example": "examples"
   },
   "files": ["dist/**/*"],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare" : "npm run build",
     "build": "rm -Rf ./dist && tsc",
     "develop": "rm -Rf ./dist && tsc --watch"
   },
