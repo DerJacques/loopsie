@@ -1,4 +1,4 @@
-import { perSecond } from "../utils";
+import { perSecond } from "../../../src/utils";
 
 export interface ShipState {
   fuel: number;

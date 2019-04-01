@@ -1,4 +1,4 @@
-import { GameLoop } from "../../main";
+import { GameLoop } from "../../src/main";
 import { getInitialState, move } from "./models/ship";
 
 const initialState = {
