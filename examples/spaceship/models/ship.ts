@@ -48,19 +48,14 @@ export const move = (shipState: ShipState, delta: number) => {
 
   return {
     ...shipState,
-    fuel: shipState.fuel - perSecond(0.3, delta),
+    fuel: shipState.fuel - perSecond(0.03, delta) * shipState.speed,
     position: {
       x:
         shipState.position.x +
-        perSecond(0.01, delta) * shipState.speed * Math.cos(a),
+        perSecond(0.01, delta) * shipState.speed * Math.sin(a),
       y:
         shipState.position.y +
-        perSecond(0.01, delta) * shipState.speed * Math.sin(a)
+        perSecond(0.01, delta) * shipState.speed * Math.cos(a)
     }
   };
 };
-
-// 0 / 360(1, 0);
-// 90(0, 1);
-// 180(-1, 0);
-// 270(0, -1);

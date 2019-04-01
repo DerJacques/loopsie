@@ -97,8 +97,8 @@ controls.on("select", function(node: any) {
 
     case ControlType.Heading:
       prompt.input("Set Heading", "", (_err, value: unknown) => {
-        log.log(`New heading: ${value}`);
-        if (Number(value)) {
+        if (!isNaN(value as number)) {
+          log.log(`New heading: ${value}`);
           gameLoop.addRunOnce((_delta, state) => ({
             ...state,
             player: setOrientation(state.player, Number(value))
