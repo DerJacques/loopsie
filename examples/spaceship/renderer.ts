@@ -1,7 +1,7 @@
 import blessed from "blessed";
 import contrib from "blessed-contrib";
 import { gameLoop } from "./logic";
-import { setSpeed, setOrientation } from "./models/ship";
+import { setSpeed, setOrientation, setSolarPanels } from "./models/ship";
 
 const screen = blessed.screen({
   debug: true,
@@ -18,7 +18,8 @@ const fuelIndicator = grid.set(0, 0, 1, 3, contrib.gauge, {
 
 enum ControlType {
   Speed,
-  Heading
+  Heading,
+  ExpandSolarPanels
 }
 
 const prompt = blessed.prompt({
@@ -37,10 +38,14 @@ const prompt = blessed.prompt({
   }
 });
 
-const log = grid.set(1, 0, 3, 2, contrib.log, {
+const log = grid.set(3, 0, 1, 2, contrib.log, {
   fg: "green",
   selectedFg: "green",
   label: "Ship Log"
+});
+
+const stats: any = grid.set(1, 0, 2, 2, contrib.markdown, {
+  label: "Stats"
 });
 
 const controls: any = grid.set(0, 3, 4, 3, contrib.tree, {
@@ -48,7 +53,7 @@ const controls: any = grid.set(0, 3, 4, 3, contrib.tree, {
   focusable: true,
   vi: true
 });
-controls.focus();
+
 controls.setData({
   extended: true,
   children: {
@@ -73,18 +78,32 @@ controls.setData({
               speed: -10
             }
           }
+        },
+        Heading: {
+          children: {
+            "Set Heading": {
+              type: ControlType.Heading
+            }
+          }
         }
       }
     },
-    Heading: {
+    Energy: {
       children: {
-        "Set Heading": {
-          type: ControlType.Heading
+        "Close Solar Panels": {
+          type: ControlType.ExpandSolarPanels,
+          expand: false
+        },
+        "Expand Solar Panels": {
+          type: ControlType.ExpandSolarPanels,
+          expand: true
         }
       }
     }
   }
 });
+
+controls.focus();
 
 controls.on("select", function(node: any) {
   switch (node.type) {
@@ -93,6 +112,7 @@ controls.on("select", function(node: any) {
         ...state,
         player: setSpeed(state.player, node.speed)
       }));
+      log.log(`New speed: ${node.speed}`);
       break;
 
     case ControlType.Heading:
@@ -105,6 +125,13 @@ controls.on("select", function(node: any) {
           }));
         }
       });
+      break;
+
+    case ControlType.ExpandSolarPanels:
+      gameLoop.addRunOnce((_delta, state) => ({
+        ...state,
+        player: setSolarPanels(state.player, node.expand)
+      }));
       break;
   }
 });
@@ -132,8 +159,16 @@ gameLoop.subscribe(state => {
       color: state.player.speed >= 0 ? "green" : "red"
     }
   ]);
+  stats.setMarkdown(
+    `
+Position:
+- X: ${state.player.position.x.toFixed(2)}
+- Y: ${state.player.position.y.toFixed(2)}
+- Orientation: ${state.player.orientation}
+    `
+  );
+
   screen.render();
-  log.log(`Position: (${state.player.position.x}, ${state.player.position.y})`);
 });
 
 gameLoop.start();

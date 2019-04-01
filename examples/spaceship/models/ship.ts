@@ -8,6 +8,7 @@ export interface ShipState {
     x: number;
     y: number;
   };
+  solarPanelsExpanded: boolean;
 }
 
 export const getInitialState = (): ShipState => ({
@@ -17,7 +18,8 @@ export const getInitialState = (): ShipState => ({
   position: {
     x: 0,
     y: 0
-  }
+  },
+  solarPanelsExpanded: false
 });
 
 export const setSpeed = (state: ShipState, speed: number): ShipState => ({
@@ -43,11 +45,12 @@ export const setOrientation = (
  * x(t) = x(0) + t v cos a
  * y(t) = y(0) + t v sin a
  */
-export const move = (shipState: ShipState, delta: number) => {
+export const move = (shipState: ShipState, delta: number): ShipState => {
   const a = (shipState.orientation * Math.PI) / 180;
 
   return {
     ...shipState,
+    solarPanelsExpanded: false,
     fuel: shipState.fuel - perSecond(0.03, delta) * shipState.speed,
     position: {
       x:
@@ -59,3 +62,12 @@ export const move = (shipState: ShipState, delta: number) => {
     }
   };
 };
+
+export const setSolarPanels = (
+  shipState: ShipState,
+  expanded: boolean
+): ShipState => ({
+  ...shipState,
+  solarPanelsExpanded: expanded,
+  speed: 5
+});
