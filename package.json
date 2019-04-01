@@ -1,6 +1,6 @@
 {
   "name": "loopsie",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A gameloop that helps you handle state as well",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,10 +8,12 @@
     "type": "git",
     "url": "https://github.com/DerJacques/loopsie"
   },
-  "files": ["dist/**/*"],
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare" : "npm run build",
+    "prepare": "npm run build",
     "build": "rm -Rf ./dist && tsc",
     "develop": "rm -Rf ./dist && tsc --watch"
   },
@@ -22,8 +24,7 @@
   ],
   "author": "Manuel J. Thomsen",
   "license": "MIT",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/blessed": "^0.1.11",
     "typescript": "^3.4.1"
