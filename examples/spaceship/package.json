@@ -1,5 +1,5 @@
 {
-  "name": "loopsie",
+  "name": "spaceship",
   "version": "0.0.1",
   "description": "A gameloop that helps you handle state as well",
   "main": "dist/src/index.js",
@@ -11,24 +11,18 @@
   "directories": {
     "example": "examples"
   },
-  "files": ["dist/**/*"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare" : "npm run build",
-    "build": "rm -Rf ./dist && tsc",
-    "develop": "rm -Rf ./dist && tsc --watch"
+    "dev": "ts-node ./renderer.ts"
   },
-  "keywords": [
-    "gameloop",
-    "state",
-    "typescript"
-  ],
   "author": "Manuel J. Thomsen",
   "license": "MIT",
   "dependencies": {
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.8.12"
   },
   "devDependencies": {
     "@types/blessed": "^0.1.11",
-    "typescript": "^3.4.1"
+    "typescript": "^3.4.1",
+    "ts-node":"8.0.3"
   }
 }
