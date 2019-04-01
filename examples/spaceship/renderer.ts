@@ -1,7 +1,7 @@
 import blessed from "blessed";
 import contrib from "blessed-contrib";
 import { gameLoop } from "./logic";
-import { setSpeed } from "./models/ship";
+import { setSpeed, setOrientation } from "./models/ship";
 
 const screen = blessed.screen({
   debug: true,
@@ -17,8 +17,31 @@ const fuelIndicator = grid.set(0, 0, 1, 3, contrib.gauge, {
 });
 
 enum ControlType {
-  Speed
+  Speed,
+  Heading
 }
+
+const prompt = blessed.prompt({
+  top: "center",
+  left: "center",
+  width: "50%",
+  height: "50%",
+  tags: true,
+  shadow: true,
+  border: {
+    type: "line"
+  },
+  style: {
+    fg: "white",
+    bg: "black"
+  }
+});
+
+const log = grid.set(1, 0, 3, 2, contrib.log, {
+  fg: "green",
+  selectedFg: "green",
+  label: "Ship Log"
+});
 
 const controls: any = grid.set(0, 3, 4, 3, contrib.tree, {
   label: "Commands",
@@ -52,6 +75,13 @@ controls.setData({
           }
         }
       }
+    },
+    Heading: {
+      children: {
+        "Set Heading": {
+          type: ControlType.Heading
+        }
+      }
     }
   }
 });
@@ -64,6 +94,18 @@ controls.on("select", function(node: any) {
         player: setSpeed(state.player, node.speed)
       }));
       break;
+
+    case ControlType.Heading:
+      prompt.input("Set Heading", "", (_err, value: unknown) => {
+        log.log(`New heading: ${value}`);
+        if (Number(value)) {
+          gameLoop.addRunOnce((_delta, state) => ({
+            ...state,
+            player: setOrientation(state.player, Number(value))
+          }));
+        }
+      });
+      break;
   }
 });
 
@@ -75,11 +117,7 @@ const speedIndicator = grid.set(1, 2, 1, 1, contrib.donut, {
   yPadding: 2
 });
 
-const log = grid.set(1, 0, 3, 2, contrib.log, {
-  fg: "green",
-  selectedFg: "green",
-  label: "Ship Log"
-});
+screen.append(prompt);
 
 screen.key(["escape", "q", "C-c"], function(_ch, _key) {
   return process.exit(0);

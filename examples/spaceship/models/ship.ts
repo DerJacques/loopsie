@@ -3,7 +3,7 @@ import { perSecond } from "../utils";
 export interface ShipState {
   fuel: number;
   speed: number;
-  direction: number; // Degrees
+  orientation: number; // Degrees
   position: {
     x: number;
     y: number;
@@ -13,7 +13,7 @@ export interface ShipState {
 export const getInitialState = (): ShipState => ({
   fuel: 100,
   speed: 5,
-  direction: 30, // Degrees
+  orientation: 30, // Degrees
   position: {
     x: 0,
     y: 0
@@ -23,6 +23,14 @@ export const getInitialState = (): ShipState => ({
 export const setSpeed = (state: ShipState, speed: number): ShipState => ({
   ...state,
   speed
+});
+
+export const setOrientation = (
+  state: ShipState,
+  orientation: number
+): ShipState => ({
+  ...state,
+  orientation
 });
 
 /**
@@ -36,7 +44,7 @@ export const setSpeed = (state: ShipState, speed: number): ShipState => ({
  * y(t) = y(0) + t v sin a
  */
 export const move = (shipState: ShipState, delta: number) => {
-  const a = (shipState.direction * Math.PI) / 180;
+  const a = (shipState.orientation * Math.PI) / 180;
 
   return {
     ...shipState,
