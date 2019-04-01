@@ -5,7 +5,7 @@ interface GameLoopConfig {
 
 type State<T = unknown> = T;
 
-type TickCallback<T> = (delta: number, state: State<T>) => State<T> | void;
+type TickCallback<T> = (delta: number, state: State<T>) => State<T>;
 type Subscription<T> = (state: State<T>) => void;
 
 const defaultConfig: GameLoopConfig = {
