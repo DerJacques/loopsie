@@ -2,14 +2,11 @@
   "name": "loopsie",
   "version": "0.0.1",
   "description": "A gameloop that helps you handle state as well",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/DerJacques/loopsie"
-  },
-  "directories": {
-    "example": "examples"
   },
   "files": ["dist/**/*"],
   "scripts": {
