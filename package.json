@@ -4,6 +4,10 @@
   "description": "A gameloop that helps you handle state as well",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DerJacques/loopsie"
+  },
   "directories": {
     "example": "examples"
   },
