@@ -81,3 +81,6 @@ gameLoop.subscribe(state => {
 gameLoop.start();
 
 ```
+
+## Examples
+* [Simple game that renders to the DOM](https://codesandbox.io/embed/8xlj066lr8)
