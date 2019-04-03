@@ -95,7 +95,7 @@ export class GameLoop<T> {
     this.render(this.state);
 
     if (typeof window !== "undefined" && window.requestAnimationFrame) {
-      window.requestAnimationFrame(() => this.runLoop);
+      window.requestAnimationFrame(() => this.runLoop());
     } else {
       setTimeout(() => this.runLoop(), 0);
     }
